@@ -1,0 +1,76 @@
+name: PR Review with OpenAI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        repository: 'alefinvest/IdeaHub'
+        ref: ${{ github.event.pull_request.head.ref }}
+        token: ${{ secrets.TOKEN }}
+
+    - name: Fetch the pull request ref and default branch
+      run: |
+        git fetch origin +refs/pull/${{ github.event.pull_request.number }}/merge:pr-merge
+        git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
+
+    - name: Ensure we're on the PR merge commit
+      run: git checkout pr-merge
+
+    - name: Get PR Diff (Limit to Specific File Types)
+      run: git diff ${{ github.event.repository.default_branch }} pr-merge > diff.txt
+
+    - name: Split Diff into Chunks
+      run: |
+        split -l 500 diff.txt diff_chunk_
+
+    - name: Send Diff Chunks to OpenAI
+      run: |
+        for chunk in diff_chunk_*; do
+          DIFF_CONTENT=$(cat $chunk)
+          PROMPT="You are a Blockchain Ethereum and Ton protocol seniour develooper as well as NextJs and Python senior developer reviewing a pull request. The following diff shows lines that have been added or removed as well as context:\n\n${DIFF_CONTENT}\n\nPlease review the changes and provide any recommended improvements or point out specific issues. Focus your feedback on the lines that have been added or removed."
+          
+          ESCAPED_PROMPT=$(echo "$PROMPT" | jq -Rs .)
+
+          RESPONSE=$(curl https://api.openai.com/v1/chat/completions \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
+            -d "{
+              \"model\": \"gpt-4o-mini\",
+              \"messages\": [{
+                \"role\": \"user\",
+                \"content\": $ESCAPED_PROMPT
+              }],
+              \"max_tokens\": 500
+            }")
+          echo "$RESPONSE" >> responses.txt
+        done
+
+    - name: Parse OpenAI Response
+      id: parse_response
+      run: |
+        REVIEW=$(cat responses.txt | jq -r '.choices[0].message.content')
+        echo "review<<EOF" >> $GITHUB_OUTPUT
+        echo "$REVIEW" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        token: ${{ secrets.TOKEN }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          OpenAI Review Result:
+
+          ${{ steps.parse_response.outputs.review }}
