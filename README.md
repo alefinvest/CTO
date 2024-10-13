@@ -29,3 +29,7 @@
 ## Dash.board UI
 
 ![dashboard v1](images/image.png)
+
+## TODO: Telegram bot
+
+> https://www.launchfa.st/blog/telegram-nextjs-app-router
