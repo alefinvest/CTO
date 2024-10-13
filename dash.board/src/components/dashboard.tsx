@@ -7,6 +7,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { Globe, Plus, Heart } from "lucide-react"
 
+// Define the type for the dashboard data
+type DashboardData = {
+  totalIdeas: number;
+  avgImplementationRate: number;
+  globalReach: number;
+  topIdeas: { id: number; name: string; completionRate: number }[];
+};
+
 // Mock function to simulate data fetching
 const fetchDashboardData = () => {
   return new Promise((resolve) => {
@@ -26,11 +34,11 @@ const fetchDashboardData = () => {
 }
 
 export function DashboardComponent() {
-  const [dashboardData, setDashboardData] = useState(null)
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchDashboardData().then((data) => {
+    fetchDashboardData().then((data: any) => {
       setDashboardData(data)
       setLoading(false)
     })
@@ -56,7 +64,7 @@ export function DashboardComponent() {
             <CardTitle className="text-sm font-medium">Total Ideas</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData.totalIdeas}</div>
+            <div className="text-2xl font-bold">{dashboardData?.totalIdeas}</div>
           </CardContent>
         </Card>
 
@@ -65,7 +73,7 @@ export function DashboardComponent() {
             <CardTitle className="text-sm font-medium">Avg. Implementation Rate</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData.avgImplementationRate}%</div>
+            <div className="text-2xl font-bold">{dashboardData?.avgImplementationRate}%</div>
           </CardContent>
         </Card>
 
@@ -75,7 +83,7 @@ export function DashboardComponent() {
           </CardHeader>
           <CardContent className="flex items-center justify-center">
             <Globe className="h-24 w-24 text-muted-foreground" />
-            <span className="absolute text-2xl font-bold">{dashboardData.globalReach}</span>
+            <span className="absolute text-2xl font-bold">{dashboardData?.globalReach}</span>
           </CardContent>
         </Card>
       </div>
@@ -86,7 +94,7 @@ export function DashboardComponent() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {dashboardData.topIdeas.map((idea) => (
+            {dashboardData?.topIdeas.map((idea) => (
               <div key={idea.id} className="flex items-center">
                 <div className="w-40 font-medium">{idea.name}</div>
                 <div className="w-full">
