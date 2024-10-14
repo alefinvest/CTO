@@ -55,7 +55,6 @@ function RootInner({ children }: PropsWithChildren) {
 
   return (
     <TonConnectUIProvider
-      projectId={TON_CONNECT_PROJECT_ID}
       manifestUrl="/tonconnect-manifest.json"
     >
       <AppRoot
