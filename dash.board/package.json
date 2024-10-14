@@ -30,7 +30,8 @@
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.5.3",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "tonweb": "^0.0.66"
   },
   "devDependencies": {
     "@types/node": "^20",

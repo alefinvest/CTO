@@ -20,6 +20,9 @@ import { init } from '@/core/init';
 
 import './styles.css';
 
+// Define your TONConnect project ID and other configurations
+const TON_CONNECT_PROJECT_ID = process.env.TON_CONNECT_PROJECT_ID || 'cto-dashboard-project-id'; // Use environment variable
+
 function RootInner({ children }: PropsWithChildren) {
   const isDev = process.env.NODE_ENV === 'development';
 
@@ -51,7 +54,10 @@ function RootInner({ children }: PropsWithChildren) {
   }, [debug]);
 
   return (
-    <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
+    <TonConnectUIProvider
+      projectId={TON_CONNECT_PROJECT_ID}
+      manifestUrl="/tonconnect-manifest.json"
+    >
       <AppRoot
         appearance={isDark ? 'dark' : 'light'}
         platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}

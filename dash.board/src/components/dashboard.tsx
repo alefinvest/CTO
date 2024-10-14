@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { Globe, Plus, Heart } from "lucide-react"
+import { useTonWallet, TonConnectButton } from '@tonconnect/ui-react'
+import { getTokenBalance } from '@/lib/tonUtils' // Import the utility function
 
 // Define the type for the dashboard data
 type DashboardData = {
@@ -15,27 +17,11 @@ type DashboardData = {
   topIdeas: { id: number; name: string; completionRate: number }[];
 };
 
-// Mock function to simulate data fetching
-const fetchDashboardData = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        totalIdeas: 83,
-        avgImplementationRate: 94,
-        globalReach: 42,
-        topIdeas: [
-          { id: 1, name: "Idea 1", completionRate: 75 },
-          { id: 2, name: "Idea 2", completionRate: 50 },
-          { id: 3, name: "Idea 3", completionRate: 25 },
-        ]
-      })
-    }, 1000)
-  })
-}
-
 export function DashboardComponent() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [tokenBalance, setTokenBalance] = useState<string | null>(null)
+  const wallet = useTonWallet()
 
   useEffect(() => {
     fetchDashboardData().then((data: any) => {
@@ -43,6 +29,22 @@ export function DashboardComponent() {
       setLoading(false)
     })
   }, [])
+
+  useEffect(() => {
+    if (wallet && wallet.account.address) {
+      fetchTokenBalance(wallet.account.address)
+    }
+  }, [wallet])
+
+  const fetchTokenBalance = async (address: string) => {
+    try {
+      const balance = await getTokenBalance(address)
+      setTokenBalance(balance)
+    } catch (error) {
+      console.error('Error fetching token balance:', error)
+      setTokenBalance('Error')
+    }
+  }
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>
@@ -52,13 +54,20 @@ export function DashboardComponent() {
     <div className="min-h-screen bg-background p-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Dash Board Dashboard</h1>
-        <Avatar>
-          <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-          <AvatarFallback>JD</AvatarFallback>
-        </Avatar>
+        {wallet ? (
+          <div className="flex items-center space-x-2">
+            <Avatar>
+              <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+            <span className="text-sm">{wallet.account.address}</span>
+          </div>
+        ) : (
+          <TonConnectButton />
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Ideas</CardTitle>
@@ -84,6 +93,21 @@ export function DashboardComponent() {
           <CardContent className="flex items-center justify-center">
             <Globe className="h-24 w-24 text-muted-foreground" />
             <span className="absolute text-2xl font-bold">{dashboardData?.globalReach}</span>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">TON Token Balance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {tokenBalance !== null
+                ? tokenBalance === 'Error'
+                  ? 'Error fetching balance'
+                  : `${tokenBalance} TON`
+                : 'Fetching...'}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -118,4 +142,22 @@ export function DashboardComponent() {
       </div>
     </div>
   )
+}
+
+// Mock function to simulate fetching dashboard data
+const fetchDashboardData = () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        totalIdeas: 83,
+        avgImplementationRate: 94,
+        globalReach: 42,
+        topIdeas: [
+          { id: 1, name: "Idea 1", completionRate: 75 },
+          { id: 2, name: "Idea 2", completionRate: 50 },
+          { id: 3, name: "Idea 3", completionRate: 25 },
+        ]
+      })
+    }, 1000)
+  })
 }
