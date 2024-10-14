@@ -30,6 +30,10 @@
 
 ![dashboard v1](images/image.png)
 
-## TODO: Telegram bot
+## Telegram bot
 
-> https://www.launchfa.st/blog/telegram-nextjs-app-router
+[Get quote bot](https://t.me/cto_empowery_bot)
+
+## Connect Wallet
+
+![Connect Wallet TONcoin](images/image-ui-connect-wallet.png)
