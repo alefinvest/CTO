@@ -1,7 +1,7 @@
 {
-  "url": "https://ton.vote",
-  "name": "CTO Dashboard",
-  "iconUrl": "https://ton.vote/logo.png",
+  "url": "https://dashbooard-nine.vercel.app",
+  "name": "CTO Dash.Board",
+  "iconUrl": "https://dashbooard-nine.vercel.app/logo.png",
   "projectId": "cto-dash-board-project-id", // Add this line
   "redirectURL": "https://dashbooard-nine.vercel.app", // Replace with your actual redirect URL
   "network": {
