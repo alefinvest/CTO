@@ -18,7 +18,8 @@ jobs:
       with:
         repository: 'alefinvest/CTO'
         ref: ${{ github.event.pull_request.head.ref }}
-        token: ${{ secrets.TOKEN }}
+        # Use `GITHUB_TOKEN` for Dependabot or use the secret TOKEN for others
+        token: ${{ github.actor == 'dependabot[bot]' && github.token || secrets.TOKEN }}
 
     - name: Fetch the pull request ref and default branch
       run: |
@@ -36,6 +37,7 @@ jobs:
         split -l 500 diff.txt diff_chunk_
 
     - name: Send Diff Chunks to OpenAI
+      if: ${{ github.actor != 'dependabot[bot]' }} # Skip this step for Dependabot PRs
       run: |
         for chunk in diff_chunk_*; do
           DIFF_CONTENT=$(cat $chunk)
@@ -59,6 +61,7 @@ jobs:
 
     - name: Parse OpenAI Response
       id: parse_response
+      if: ${{ github.actor != 'dependabot[bot]' }} # Skip this step for Dependabot PRs
       run: |
         REVIEW=$(cat responses.txt | jq -r '.choices[0].message.content')
         echo "review<<EOF" >> $GITHUB_OUTPUT
@@ -66,6 +69,7 @@ jobs:
         echo "EOF" >> $GITHUB_OUTPUT
 
     - name: Create comment
+      if: ${{ github.actor != 'dependabot[bot]' }} # Skip this step for Dependabot PRs
       uses: peter-evans/create-or-update-comment@v3
       with:
         token: ${{ secrets.TOKEN }}
