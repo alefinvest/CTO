@@ -2,10 +2,10 @@
   "url": "https://dashbooard-nine.vercel.app",
   "name": "CTO Dash.Board",
   "iconUrl": "https://dashbooard-nine.vercel.app/logo.png",
-  "projectId": "cto-dash-board-project-id", // Add this line
-  "redirectURL": "https://dashbooard-nine.vercel.app", // Replace with your actual redirect URL
+  "projectId": "cto-dash-board-project-id", 
+  "redirectURL": "https://dashbooard-nine.vercel.app", 
   "network": {
-    "chainId": 1, // Replace with the appropriate chain ID
-    "network": "mainnet" // Replace with "testnet" if applicable
+    "chainId": 1, 
+    "network": "mainnet"
   }
 }
