@@ -55,7 +55,7 @@ function RootInner({ children }: PropsWithChildren) {
 
   return (
     <TonConnectUIProvider
-      manifestUrl="/tonconnect-manifest.json"
+      manifestUrl="https://dashbooard-nine.vercel.app/tonconnect-manifest.json"
     >
       <AppRoot
         appearance={isDark ? 'dark' : 'light'}
