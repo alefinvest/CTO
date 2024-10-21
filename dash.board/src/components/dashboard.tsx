@@ -53,14 +53,13 @@ export function DashboardComponent() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Dash Board Dashboard</h1>
+        <h1 className="text-3xl font-bold">CTO Dash.Board</h1>
         {wallet ? (
           <div className="flex items-center space-x-2">
             <Avatar>
-              <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarImage src="/placeholder-user.jpg" alt="User" />
             </Avatar>
-            <span className="text-sm">{wallet.account.address}</span>
+            <span className="text-sm">{`${wallet.account.address?.substring(0, 4)}...${wallet.account.address?.substring(wallet.account.address.length - 4)}`}</span>
           </div>
         ) : (
           <TonConnectButton />
