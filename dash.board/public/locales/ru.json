@@ -1,6 +1,17 @@
 {
   "i18n": {
-    "header": "Поддержка i18n",
-    "footer": "Вы можете выбрать другой язык в выпадающем меню."
+    "header": "Приложение поддерживает i18n",
+    "footer": "Вы можете выбрать другой язык из меню выбора."
+  },
+  "dashboard": {
+    "loading": "Загрузка...",
+    "ctoDashboard": "CTO Dash.Board",
+    "totalIdeas": "Общее количество идей",
+    "avgImplementationRate": "Средняя скорость реализации",
+    "globalReach": "Глобальная доступность",
+    "tonTokenBalance": "Баланс токенов TON",
+    "errorFetchingBalance": "Ошибка при получении баланса",
+    "fetching": "Получение...",
+    "topIdeasPerformance": "Результаты топ-идей"
   }
 }

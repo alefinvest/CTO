@@ -1,0 +1,17 @@
+{
+  "i18n": {
+    "header": "Підтримка i18n",
+    "footer": "Ви можете вибрати іншу мову в випадаючому меню."
+  },
+  "dashboard": {
+    "loading": "Завантаження...",
+    "ctoDashboard": "CTO Dash.Board",
+    "totalIdeas": "Загальна кількість ідей",
+    "avgImplementationRate": "Середній рівень реалізації",
+    "globalReach": "Глобальне охоплення",
+    "tonTokenBalance": "Баланс TON токенів",
+    "errorFetchingBalance": "Помилка отримання балансу",
+    "fetching": "Отримання...",
+    "topIdeasPerformance": "Результативність топ ідей"
+  }
+} 

@@ -1,15 +1,15 @@
-"use client"
+import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import { Globe, Plus, Heart } from "lucide-react";
+import { useTonWallet, TonConnectButton } from '@tonconnect/ui-react';
+import { getTokenBalance } from '@/lib/tonUtils';
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
-import { Globe, Plus, Heart } from "lucide-react"
-import { useTonWallet, TonConnectButton } from '@tonconnect/ui-react'
-import { getTokenBalance } from '@/lib/tonUtils' // Import the utility function
+import './styles.css';
 
-// Define the type for the dashboard data
 type DashboardData = {
   totalIdeas: number;
   avgImplementationRate: number;
@@ -18,48 +18,50 @@ type DashboardData = {
 };
 
 export function DashboardComponent() {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [tokenBalance, setTokenBalance] = useState<string | null>(null)
-  const wallet = useTonWallet()
+  const t = useTranslations('dashboard');
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [tokenBalance, setTokenBalance] = useState<string | null>(null);
+  const wallet = useTonWallet();
 
   useEffect(() => {
     fetchDashboardData().then((data: any) => {
-      setDashboardData(data)
-      setLoading(false)
-    })
-  }, [])
+      setDashboardData(data);
+      setLoading(false);
+    });
+  }, []);
 
   useEffect(() => {
     if (wallet && wallet.account.address) {
-      fetchTokenBalance(wallet.account.address)
+      fetchTokenBalance(wallet.account.address);
     }
-  }, [wallet])
+  }, [wallet]);
 
   const fetchTokenBalance = async (address: string) => {
     try {
-      const balance = await getTokenBalance(address)
-      setTokenBalance(balance)
+      const balance = await getTokenBalance(address);
+      setTokenBalance(balance);
     } catch (error) {
-      console.error('Error fetching token balance:', error)
-      setTokenBalance('Error')
+      console.error('Error fetching token balance:', error);
+      setTokenBalance('Error');
     }
-  }
+  };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
+    return <div className="flex justify-center items-center h-screen">{t('loading')}</div>;
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background text-foreground p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">CTO Dash.Board</h1>
+        <h1 className="text-3xl font-bold">{t('ctoDashboard')}</h1>
         {wallet ? (
           <div className="flex items-center space-x-2">
             <Avatar>
               <AvatarImage src="/placeholder-user.jpg" alt="User" />
             </Avatar>
             <span className="text-sm">{`${wallet.account.address?.substring(0, 4)}...${wallet.account.address?.substring(wallet.account.address.length - 4)}`}</span>
+            <Button onClick={() => wallet.disconnect()} variant="outline">Disconnect</Button>
           </div>
         ) : (
           <TonConnectButton />
@@ -69,7 +71,7 @@ export function DashboardComponent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Ideas</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalIdeas')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{dashboardData?.totalIdeas}</div>
@@ -78,7 +80,7 @@ export function DashboardComponent() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Implementation Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('avgImplementationRate')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{dashboardData?.avgImplementationRate}%</div>
@@ -87,7 +89,7 @@ export function DashboardComponent() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Global Reach</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('globalReach')}</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
             <Globe className="h-24 w-24 text-muted-foreground" />
@@ -97,15 +99,15 @@ export function DashboardComponent() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">TON Token Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('tonTokenBalance')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {tokenBalance !== null
                 ? tokenBalance === 'Error'
-                  ? 'Error fetching balance'
+                  ? t('errorFetchingBalance')
                   : `${tokenBalance} TON`
-                : 'Fetching...'}
+                : t('fetching')}
             </div>
           </CardContent>
         </Card>
@@ -113,7 +115,7 @@ export function DashboardComponent() {
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Top Ideas Performance</CardTitle>
+          <CardTitle>{t('topIdeasPerformance')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -140,7 +142,7 @@ export function DashboardComponent() {
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 // Mock function to simulate fetching dashboard data
@@ -156,7 +158,7 @@ const fetchDashboardData = () => {
           { id: 2, name: "Idea 2", completionRate: 50 },
           { id: 3, name: "Idea 3", completionRate: 25 },
         ]
-      })
-    }, 1000)
-  })
+      });
+    }, 1000);
+  });
 }

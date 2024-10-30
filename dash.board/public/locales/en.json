@@ -2,5 +2,16 @@
   "i18n": {
     "header": "Application supports i18n",
     "footer": "You can select a different language from the dropdown menu."
+  },
+  "dashboard": {
+    "loading": "Loading...",
+    "ctoDashboard": "CTO Dash.Board",
+    "totalIdeas": "Total Ideas",
+    "avgImplementationRate": "Avg. Implementation Rate",
+    "globalReach": "Global Reach",
+    "tonTokenBalance": "TON Token Balance",
+    "errorFetchingBalance": "Error fetching balance",
+    "fetching": "Fetching...",
+    "topIdeasPerformance": "Top Ideas Performance"
   }
 }

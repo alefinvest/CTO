@@ -23,6 +23,10 @@ import './styles.css';
 // Define your TONConnect project ID and other configurations
 const TON_CONNECT_PROJECT_ID = process.env.TON_CONNECT_PROJECT_ID || 'cto-dashboard-project-id'; // Use environment variable
 
+function applyTheme(isDark: boolean) {
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+}
+
 function RootInner({ children }: PropsWithChildren) {
   const isDev = process.env.NODE_ENV === 'development';
 
@@ -53,9 +57,13 @@ function RootInner({ children }: PropsWithChildren) {
     debug && import('eruda').then((lib) => lib.default.init());
   }, [debug]);
 
+  useEffect(() => {
+    applyTheme(isDark);
+  }, [isDark]);
+
   return (
     <TonConnectUIProvider
-      manifestUrl="https://dashbooard-nine.vercel.app/tonconnect-manifest.json"
+      manifestUrl={location.origin + '/tonconnect-manifest.json'}
     >
       <AppRoot
         appearance={isDark ? 'dark' : 'light'}
