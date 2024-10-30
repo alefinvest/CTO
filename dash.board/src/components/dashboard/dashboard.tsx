@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Globe, Plus, Heart } from "lucide-react";
-import { useTonWallet, TonConnectButton } from '@tonconnect/ui-react';
+import { useTonWallet, TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
 import { getTokenBalance } from '@/lib/tonUtils';
 
 import './styles.css';
@@ -23,6 +23,7 @@ export function DashboardComponent() {
   const [loading, setLoading] = useState(true);
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
   const wallet = useTonWallet();
+  const [tonConnectUI] = useTonConnectUI();
 
   useEffect(() => {
     fetchDashboardData().then((data: any) => {
@@ -47,6 +48,15 @@ export function DashboardComponent() {
     }
   };
 
+  const handleDisconnect = async () => {
+    try {
+      await tonConnectUI.disconnect();
+      setTokenBalance(null);
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error);
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center h-screen">{t('loading')}</div>;
   }
@@ -61,7 +71,7 @@ export function DashboardComponent() {
               <AvatarImage src="/placeholder-user.jpg" alt="User" />
             </Avatar>
             <span className="text-sm">{`${wallet.account.address?.substring(0, 4)}...${wallet.account.address?.substring(wallet.account.address.length - 4)}`}</span>
-            <Button onClick={() => wallet.disconnect()} variant="outline">Disconnect</Button>
+            <Button onClick={handleDisconnect} variant="outline">Disconnect</Button>
           </div>
         ) : (
           <TonConnectButton />
