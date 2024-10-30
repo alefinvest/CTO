@@ -17,11 +17,13 @@ type DashboardData = {
   topIdeas: { id: number; name: string; completionRate: number }[];
 };
 
+const BEST_TOKEN_ADDRESS = 'EQAYBBxTvEGY4CZ2Rvut6NV-7HUxewCR6G8AViuVSnDtnBfZ';
+
 export function DashboardComponent() {
   const t = useTranslations('dashboard');
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tokenBalance, setTokenBalance] = useState<string | null>(null);
+  const [bestTokenBalance, setBestTokenBalance] = useState<string | null>(null);
   const wallet = useTonWallet();
   const [tonConnectUI] = useTonConnectUI();
 
@@ -34,24 +36,24 @@ export function DashboardComponent() {
 
   useEffect(() => {
     if (wallet && wallet.account.address) {
-      fetchTokenBalance(wallet.account.address);
+      fetchBestTokenBalance(wallet.account.address);
     }
   }, [wallet]);
 
-  const fetchTokenBalance = async (address: string) => {
+  const fetchBestTokenBalance = async (address: string) => {
     try {
-      const balance = await getTokenBalance(address);
-      setTokenBalance(balance);
+      const balance = await getTokenBalance(address, BEST_TOKEN_ADDRESS);
+      setBestTokenBalance(balance);
     } catch (error) {
-      console.error('Error fetching token balance:', error);
-      setTokenBalance('Error');
+      console.error('Error fetching BEST token balance:', error);
+      setBestTokenBalance('Error');
     }
   };
 
   const handleDisconnect = async () => {
     try {
       await tonConnectUI.disconnect();
-      setTokenBalance(null);
+      setBestTokenBalance(null);
     } catch (error) {
       console.error('Error disconnecting wallet:', error);
     }
@@ -109,14 +111,14 @@ export function DashboardComponent() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('tonTokenBalance')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('bestTokenBalance')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {tokenBalance !== null
-                ? tokenBalance === 'Error'
+              {bestTokenBalance !== null
+                ? bestTokenBalance === 'Error'
                   ? t('errorFetchingBalance')
-                  : `${tokenBalance} TON`
+                  : `${bestTokenBalance} BEST`
                 : t('fetching')}
             </div>
           </CardContent>

@@ -1,1 +1,5 @@
- 
+.dashboard {
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+  /* Other styles */
+} 

@@ -1,22 +1,43 @@
-import TonWeb from 'tonweb'
-
-// Initialize TonWeb with a public endpoint
-const tonweb = new TonWeb(new TonWeb.HttpProvider('https://toncenter.com/api/v2/jsonRPC'))
+import { TonClient } from 'ton';
+import { Address, beginCell } from 'ton-core';
 
 /**
  * Fetches the token balance for a given TON address.
- * @param address - The TON wallet address.
+ * @param walletAddress - The TON wallet address.
+ * @param tokenAddress - The token address (optional).
  * @returns The balance in TON.
  */
-export async function getTokenBalance(address: string): Promise<string> {
+export async function getTokenBalance(walletAddress: string, tokenAddress?: string): Promise<string> {
   try {
-    const addressObj = new TonWeb.utils.Address(address)
-    const balance = await tonweb.getBalance(addressObj)
-    // Convert from nanotons to tons
-    const balanceInTons = TonWeb.utils.fromNano(balance)
-    return balanceInTons
+    const client = new TonClient({
+      endpoint: 'https://toncenter.com/api/v2/jsonRPC',
+    });
+
+    if (tokenAddress) {
+      // Fetch Jetton (token) balance
+      const jettonWalletAddress = await client.runMethod(
+        Address.parse(tokenAddress),
+        'get_wallet_address',
+        [{
+          type: 'slice',
+          cell: beginCell().storeAddress(Address.parse(walletAddress)).endCell()
+        }]
+      );
+
+      const balance = await client.runMethod(
+        jettonWalletAddress.stack.readAddress(),
+        'get_wallet_data'
+      );
+
+      const tokenBalance = balance.stack.readBigNumber();
+      return (Number(tokenBalance) / 1e9).toString(); // Assuming 9 decimals
+    }
+
+    // Fetch TON balance if no token address provided
+    const balance = await client.getBalance(Address.parse(walletAddress));
+    return (Number(balance) / 1e9).toString();
   } catch (error) {
-    console.error('Error fetching token balance:', error)
-    throw error
+    console.error('Error fetching balance:', error);
+    throw error;
   }
 }
