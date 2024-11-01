@@ -30,7 +30,7 @@ export async function getTokenBalance(walletAddress: string, tokenAddress?: stri
       );
 
       const tokenBalance = balance.stack.readBigNumber();
-      return (Number(tokenBalance) / 1e9).toString(); // Assuming 9 decimals
+      return (Number(tokenBalance) / 1e3).toString(); // Assuming 3 decimals
     }
 
     // Fetch TON balance if no token address provided
