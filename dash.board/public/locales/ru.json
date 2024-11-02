@@ -10,6 +10,7 @@
     "avgImplementationRate": "Средняя скорость реализации",
     "globalReach": "Глобальная доступность",
     "tonTokenBalance": "Баланс токенов TON",
+    "bestTokenBalance": "Баланс токенов BEST",
     "errorFetchingBalance": "Ошибка при получении баланса",
     "fetching": "Получение...",
     "topIdeasPerformance": "Результаты топ-идей"

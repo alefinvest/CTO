@@ -10,6 +10,7 @@
     "avgImplementationRate": "Середній рівень реалізації",
     "globalReach": "Глобальне охоплення",
     "tonTokenBalance": "Баланс TON токенів",
+    "bestTokenBalance": "Баланс BEST токенів",
     "errorFetchingBalance": "Помилка отримання балансу",
     "fetching": "Отримання...",
     "topIdeasPerformance": "Результативність топ ідей"

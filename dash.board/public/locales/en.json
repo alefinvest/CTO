@@ -10,6 +10,7 @@
     "avgImplementationRate": "Avg. Implementation Rate",
     "globalReach": "Global Reach",
     "tonTokenBalance": "TON Token Balance",
+    "bestTokenBalance": "BEST Token Balance",
     "errorFetchingBalance": "Error fetching balance",
     "fetching": "Fetching...",
     "topIdeasPerformance": "Top Ideas Performance"
