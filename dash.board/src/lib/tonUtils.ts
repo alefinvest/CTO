@@ -35,7 +35,7 @@ export async function getTokenBalance(walletAddress: string, tokenAddress?: stri
 
     // Fetch TON balance if no token address provided
     const balance = await client.getBalance(Address.parse(walletAddress));
-    return (Number(balance) / 1e3).toString();
+    return (Number(balance) / 1e9).toString();
   } catch (error) {
     console.error('Error fetching balance:', error);
     throw error;

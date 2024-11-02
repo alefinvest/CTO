@@ -65,15 +65,17 @@ export function DashboardComponent() {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col gap-4 mb-8">
         <h1 className="text-3xl font-bold">{t('ctoDashboard')}</h1>
         {wallet ? (
-          <div className="flex items-center space-x-2">
-            <Avatar>
-              <AvatarImage src="/placeholder-user.jpg" alt="User" />
-            </Avatar>
-            <span className="text-sm">{`${wallet.account.address?.substring(0, 4)}...${wallet.account.address?.substring(wallet.account.address.length - 4)}`}</span>
-            <Button onClick={handleDisconnect} variant="outline">Disconnect</Button>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <Avatar>
+                <AvatarImage src="/placeholder-user.jpg" alt="User" />
+              </Avatar>
+              <span className="text-sm">{`${wallet.account.address?.substring(0, 4)}...${wallet.account.address?.substring(wallet.account.address.length - 4)}`}</span>
+            </div>
+            <Button onClick={handleDisconnect} variant="outline" className="w-full">Disconnect</Button>
           </div>
         ) : (
           <TonConnectButton />
