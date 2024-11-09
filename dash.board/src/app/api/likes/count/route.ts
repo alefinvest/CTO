@@ -20,6 +20,7 @@ export async function GET() {
 
     return NextResponse.json({ count });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Failed to get likes count' }, { status: 500 });
   }
 }

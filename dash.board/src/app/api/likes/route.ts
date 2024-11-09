@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TonClient, Address, beginCell } from 'ton';
-// import { useTonConnectUI } from '@tonconnect/ui-react';
 
 const LIKES_CONTRACT_ADDRESS = process.env.LIKES_CONTRACT_ADDRESS;
 
@@ -20,9 +19,11 @@ export async function POST(req: NextRequest) {
     
     // Перевіряємо, чи користувач вже лайкнув
     const userAddressCell = beginCell().storeAddress(Address.parse(address)).endCell();
-    const hasLiked = await client.runMethod(contract, 'hasLiked', [{ type: 'slice', cell: userAddressCell }]);
+    const hasLikedResult = await client.runMethod(contract, 'hasLiked', [{ type: 'slice', cell: userAddressCell }]);
 
-    if (hasLiked.stack.readNumber() === 1) {
+    const hasLiked = hasLikedResult.stack.readNumber();
+
+    if (hasLiked === 1) {
       return NextResponse.json({ error: 'Ви вже лайкнули' }, { status: 400 });
     }
 
@@ -31,4 +32,4 @@ export async function POST(req: NextRequest) {
     console.error(error);
     return NextResponse.json({ error: 'Не вдалося обробити лайк' }, { status: 500 });
   }
-} 
+}
