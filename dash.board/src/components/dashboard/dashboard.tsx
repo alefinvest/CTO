@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Globe, Plus, Heart } from "lucide-react";
 import { useTonWallet, TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
 import { getTokenBalance } from '@/lib/tonUtils';
+import { LikeButton } from '@/components/LikeButton/LikeButton';
 
 import './styles.css';
 
@@ -150,10 +151,7 @@ export function DashboardComponent() {
         <Button size="icon" className="rounded-full">
           <Plus className="h-6 w-6" />
         </Button>
-        <Button size="icon" variant="outline" className="rounded-full">
-          <Heart className="h-6 w-6" />
-          <span className="sr-only">Likes</span>
-        </Button>
+       <LikeButton />
       </div>
     </div>
   );

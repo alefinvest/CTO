@@ -30,6 +30,7 @@
     "react": "^18",
     "react-dom": "^18",
     "send": "^1.1.0",
+    "swr": "^2.2.5",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
     "ton": "^13.9.0",
