@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TonClient, Address, beginCell } from 'ton';
-import { useTonConnect } from '@tonconnect/ui-react';
+// import { useTonConnectUI } from '@tonconnect/ui-react';
 
 const LIKES_CONTRACT_ADDRESS = process.env.LIKES_CONTRACT_ADDRESS;
 
