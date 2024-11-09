@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 
 const handler = NextAuth({
@@ -13,8 +13,10 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async session({ session, token }) {
-      session.user.id = token.sub;
+    async session({ session, token }): Promise<Session> {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+      }
       return session;
     },
   },
