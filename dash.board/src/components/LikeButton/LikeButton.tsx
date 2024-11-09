@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+'use client';
+
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { useTonWallet, useTonConnectUI } from '@tonconnect/ui-react';
-import { Address } from 'ton-core';
 import useSWR from 'swr';
 
 export function LikeButton() {
@@ -25,20 +26,26 @@ export function LikeButton() {
     try {
       setIsLiking(true);
       
-      const response = await fetch('/api/likes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          address: wallet.account.address,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to like');
+      // Виклик функції `like` смарт-контракту через TonConnect
+      const contractAddress = process.env.NEXT_PUBLIC_LIKES_CONTRACT_ADDRESS;
+      if (!contractAddress) {
+        throw new Error('LIKES_CONTRACT_ADDRESS не встановлено в середовищі');
       }
 
+      const contract = wallet.addressToAddress(contractAddress);
+
+      // Створення повідомлення для виклику функції `like`
+      const msgValue = '0.01'; // Залежно від необхідної суми для транзакції
+      const opCode = 'like'; // Відповідно до смарт-контракту
+      const body = `${opCode}c`; // Конвертація рядка у байтове представлення, якщо необхідно
+
+      await wallet.sendTransaction({
+        to: contract,
+        value: msgValue,
+        body: body,
+      });
+
+      // Після успішної транзакції оновлюємо кількість лайків
       await mutate();
     } catch (error) {
       console.error('Error liking:', error);
@@ -59,4 +66,4 @@ export function LikeButton() {
       {likesCount && <span className="ml-2">{likesCount}</span>}
     </Button>
   );
-} 
+}

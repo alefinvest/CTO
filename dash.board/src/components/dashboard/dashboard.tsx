@@ -1,13 +1,18 @@
+// dash.board/src/components/dashboard/dashboard.tsx
+
+'use client';
+
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Globe, Plus, Heart } from "lucide-react";
+import { Globe, Plus } from "lucide-react";
 import { useTonWallet, TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
 import { getTokenBalance } from '@/lib/tonUtils';
 import { LikeButton } from '@/components/LikeButton/LikeButton';
+import { signIn, signOut, useSession } from "next-auth/react";
 
 import './styles.css';
 
@@ -27,6 +32,20 @@ export function DashboardComponent() {
   const [bestTokenBalance, setBestTokenBalance] = useState<string | null>(null);
   const wallet = useTonWallet();
   const [tonConnectUI] = useTonConnectUI();
+  const { data: session, status } = useSession();
+
+  const handleLogin = () => {
+    signIn("github");
+  };
+
+  const handleLogout = () => {
+    signOut();
+  };
+
+  useEffect(() => {
+    if (status === "loading") return; // Чекаємо завантаження стану
+    if (!session) signIn("github"); // Перенаправлення на логін якщо не автентифікований
+  }, [session, status]);
 
   useEffect(() => {
     fetchDashboardData().then((data: any) => {
@@ -51,21 +70,32 @@ export function DashboardComponent() {
     }
   };
 
-  const handleDisconnect = async () => {
-    try {
-      await tonConnectUI.disconnect();
-      setBestTokenBalance(null);
-    } catch (error) {
-      console.error('Error disconnecting wallet:', error);
-    }
-  };
-
   if (loading) {
     return <div className="flex justify-center items-center h-screen">{t('loading')}</div>;
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">{t('ctoDashboard')}</h1>
+        {status === "authenticated" ? (
+          <div className="flex items-center gap-2">
+            <Avatar>
+              <AvatarImage src="/placeholder-user.jpg" alt="User" />
+            </Avatar>
+            <span className="text-sm">
+              {session.user?.name || session.user?.email}
+            </span>
+            <Button onClick={handleLogout} variant="outline" className="ml-2">
+              Вийти
+            </Button>
+          </div>
+        ) : (
+          <Button onClick={handleLogin} variant="default">
+            Увійти через GitHub
+          </Button>
+        )}
+      </div>
       <div className="flex flex-col gap-4 mb-8">
         <h1 className="text-3xl font-bold">{t('ctoDashboard')}</h1>
         {wallet ? (
@@ -151,26 +181,18 @@ export function DashboardComponent() {
         <Button size="icon" className="rounded-full">
           <Plus className="h-6 w-6" />
         </Button>
-       <LikeButton />
+        <LikeButton />
       </div>
     </div>
   );
 }
 
-// Mock function to simulate fetching dashboard data
-const fetchDashboardData = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        totalIdeas: 83,
-        avgImplementationRate: 94,
-        globalReach: 42,
-        topIdeas: [
-          { id: 1, name: "Idea 1", completionRate: 75 },
-          { id: 2, name: "Idea 2", completionRate: 50 },
-          { id: 3, name: "Idea 3", completionRate: 25 },
-        ]
-      });
-    }, 1000);
-  });
+// Функція fetchDashboardData повинна бути визначена
+async function fetchDashboardData(): Promise<DashboardData> {
+  const response = await fetch('/api/dashboard');
+  if (!response.ok) {
+    throw new Error('Failed to fetch dashboard data');
+  }
+  const data = await response.json();
+  return data;
 }

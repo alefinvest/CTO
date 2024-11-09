@@ -18,6 +18,8 @@ import { useClientOnce } from '@/hooks/useClientOnce';
 import { setLocale } from '@/core/i18n/locale';
 import { init } from '@/core/init';
 
+import { SessionProvider } from '@/components/Providers/SessionProvider';
+
 import './styles.css';
 
 // Define your TONConnect project ID and other configurations
@@ -83,7 +85,9 @@ export function Root(props: PropsWithChildren) {
 
   return didMount ? (
     <ErrorBoundary fallback={ErrorPage}>
-      <RootInner {...props}/>
+      <SessionProvider> {/* Додавання SessionProvider тут */}
+        <RootInner {...props}/>
+      </SessionProvider>
     </ErrorBoundary>
   ) : <div className="root__loading">Loading</div>;
 }
