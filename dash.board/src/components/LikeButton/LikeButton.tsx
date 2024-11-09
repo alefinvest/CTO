@@ -32,18 +32,22 @@ export function LikeButton() {
         throw new Error('LIKES_CONTRACT_ADDRESS не встановлено в середовищі');
       }
 
-      const contract = wallet.addressToAddress(contractAddress);
-
       // Створення повідомлення для виклику функції `like`
       const msgValue = '0.01'; // Залежно від необхідної суми для транзакції
       const opCode = 'like'; // Відповідно до смарт-контракту
       const body = `${opCode}c`; // Конвертація рядка у байтове представлення, якщо необхідно
 
-      await wallet.sendTransaction({
-        to: contract,
-        value: msgValue,
-        body: body,
-      });
+          // Start of Selection
+          await tonConnectUI.sendTransaction({
+            validUntil: Math.floor(Date.now() / 1000) + 3600, // Транзакція дійсна протягом 1 години
+            messages: [
+              {
+                address: contractAddress,
+                amount: msgValue,
+                payload: body
+              }
+            ]
+          });
 
       // Після успішної транзакції оновлюємо кількість лайків
       await mutate();
