@@ -42,20 +42,6 @@ export function DashboardComponent() {
     signOut();
   };
 
-  const handleDisconnect = async () => {
-    try {
-      await tonConnectUI.disconnect();
-      setBestTokenBalance(null);
-    } catch (error) {
-      console.error('Помилка при відключенні гаманця:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (status === "loading") return; // Чекаємо завантаження стану
-    if (!session) signIn("github"); // Перенаправлення на логін якщо не автентифікований
-  }, [session, status]);
-
   useEffect(() => {
     fetchDashboardData().then((data: any) => {
       setDashboardData(data);
@@ -108,20 +94,7 @@ export function DashboardComponent() {
       </div>
       <div className="flex flex-col gap-4 mb-8">
         <h1 className="text-3xl font-bold">{t('ctoDashboard')}</h1>
-        {wallet ? (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src="/placeholder-user.jpg" alt="User" />
-                <AvatarFallback>U</AvatarFallback>
-              </Avatar>
-              <span className="text-sm">{`${wallet.account.address?.substring(0, 4)}...${wallet.account.address?.substring(wallet.account.address.length - 4)}`}</span>
-            </div>
-            <Button onClick={handleDisconnect} variant="outline" className="w-full">Відключити</Button>
-          </div>
-        ) : (
-          <TonConnectButton />
-        )}
+        <TonConnectButton />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
