@@ -1,16 +1,33 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
+import {
+    Address,
+    beginCell,
+    Cell,
+    Contract,
+    contractAddress,
+    ContractProvider,
+    Sender,
+    SendMode,
+    Dictionary,
+    TupleItemSlice,
+} from '@ton/core';
 
 export type LikesConfig = {
-    id: number;
-    counter: number;
+    admin: Address;
+    totalLikes: number;
+    likes: Dictionary<bigint, Cell>; // Dictionary of user hashes to cells
 };
 
 export function likesConfigToCell(config: LikesConfig): Cell {
-    return beginCell().storeUint(config.id, 32).storeUint(config.counter, 32).endCell();
+    return beginCell()
+        .storeAddress(config.admin)
+        .storeUint(config.totalLikes, 32)
+        .storeDict(config.likes)
+        .endCell();
 }
 
 export const Opcodes = {
-    increase: 0x7e8764ef,
+    like: 0x6c696b65, // 'like' in hex
+    withdraw: 0x77697468, // 'with' in hex
 };
 
 export class Likes implements Contract {
@@ -29,38 +46,49 @@ export class Likes implements Contract {
     async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
         await provider.internal(via, {
             value,
-            sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell().endCell(),
         });
     }
 
-    async sendIncrease(
-        provider: ContractProvider,
-        via: Sender,
-        opts: {
-            increaseBy: number;
-            value: bigint;
-            queryID?: number;
-        }
-    ) {
+    async sendLike(provider: ContractProvider, via: Sender, opts: { value: bigint }) {
         await provider.internal(via, {
             value: opts.value,
-            sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell()
-                .storeUint(Opcodes.increase, 32)
-                .storeUint(opts.queryID ?? 0, 64)
-                .storeUint(opts.increaseBy, 32)
+                .storeUint(Opcodes.like, 32)
+                .storeAddress(via.address) // Include sender's address
                 .endCell(),
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
         });
     }
 
-    async getCounter(provider: ContractProvider) {
-        const result = await provider.get('get_counter', []);
+    async sendWithdraw(
+        provider: ContractProvider,
+        via: Sender,
+        opts: { amount: bigint; value: bigint }
+    ) {
+        await provider.internal(via, {
+            value: opts.value,
+            body: beginCell()
+                .storeUint(Opcodes.withdraw, 32)
+                .storeCoins(opts.amount)
+                .endCell(),
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+        });
+    }
+
+    async getTotalLikes(provider: ContractProvider): Promise<number> {
+        const result = await provider.get('getTotalLikes', []);
         return result.stack.readNumber();
     }
 
-    async getID(provider: ContractProvider) {
-        const result = await provider.get('get_id', []);
-        return result.stack.readNumber();
+    async hasLiked(provider: ContractProvider, userAddress: Address): Promise<boolean> {
+        const userCell = beginCell().storeAddress(userAddress).endCell();
+        const result = await provider.get('hasLiked', [{ type: 'slice', cell: userCell }]);
+        return result.stack.readNumber() === 1;
+    }
+
+    // Optional: Method to get contract ID (e.g., address)
+    getID(): Address {
+        return this.address;
     }
 }

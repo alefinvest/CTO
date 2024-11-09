@@ -9,7 +9,7 @@ export async function GET() {
       endpoint: 'https://toncenter.com/api/v2/jsonRPC',
     });
 
-    const contract = new Address(LIKES_CONTRACT_ADDRESS);
+    const contract = new Address(LIKES_CONTRACT_ADDRESS, true);
     
     const result = await client.runMethod(contract, 'getTotalLikes', []);
     const count = result.stack.readNumber();

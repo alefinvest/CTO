@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       endpoint: 'https://toncenter.com/api/v2/jsonRPC',
     });
 
-    const contract = new Address(LIKES_CONTRACT_ADDRESS);
+    const contract = new Address(LIKES_CONTRACT_ADDRESS, true);
     
     // Перевіряємо чи користувач вже лайкнув
     const hasLiked = await client.runMethod(contract, 'hasLiked', [{

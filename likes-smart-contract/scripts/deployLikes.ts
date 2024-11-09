@@ -1,13 +1,18 @@
-import { toNano } from '@ton/core';
+import { toNano, Address, Dictionary, Cell } from '@ton/core';
 import { Likes } from '../wrappers/Likes';
 import { compile, NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
+    const adminAddress = provider.sender().address as Address;
+
+    const likesDict = Dictionary.empty(Dictionary.Keys.BigUint(256), Dictionary.Values.Cell());
+
     const likes = provider.open(
         Likes.createFromConfig(
             {
-                id: Math.floor(Math.random() * 10000),
-                counter: 0,
+                admin: adminAddress, // Адміністратор — адреса розгортання
+                totalLikes: 0,
+                likes: likesDict, // Порожній словник
             },
             await compile('Likes')
         )
@@ -17,5 +22,5 @@ export async function run(provider: NetworkProvider) {
 
     await provider.waitForDeploy(likes.address);
 
-    console.log('ID', await likes.getID());
+    console.log('Контракт успішно розгорнуто! => ID: ', likes.getID().toString());
 }

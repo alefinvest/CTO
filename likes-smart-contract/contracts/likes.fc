@@ -13,7 +13,12 @@
 
 ;; Storage
 cell $Likes$_init_storage() inline {
-    return get_data();  ;; Повертаємо безпосередньо cell замість slice
+    ;; Ініціалізація сховища
+    return begin_cell()
+        .store_slice(my_address())           ;; Адміністратор — це адреса контракту
+        .store_uint(0, 32)                   ;; Загальна кількість лайків ініціалізується нулем
+        .store_dict(null())                  ;; Використовуємо null() для створення порожнього словника
+        .end_cell();
 }
 
 ;; Contract
@@ -32,7 +37,7 @@ cell $Likes$_init_storage() inline {
     
     if (op == "like"c) {
         var ($msg_body, $user) = $Like$_load(in_msg_body);
-        slice $sender = my_address();
+        slice $sender = $msg_body~load_msg_addr();  ;; Завантажуємо адресу відправника як slice тип
         int $sender_hash = slice_hash($sender);
         
         var (found?, _) = $likes.udict_get?(256, $sender_hash);
@@ -51,10 +56,9 @@ cell $Likes$_init_storage() inline {
     
     if (op == "withdraw"c) {
         var ($msg_body, $amount) = $Withdraw$_load(in_msg_body);
-        var cs = in_msg_full.begin_parse();
-        slice sender = cs~load_msg_addr();  ;; спочатку парсимо cell slice, потім отримуємо адресу
-        throw_unless(101, eq_slice(sender, $admin));
-        throw_unless(102, $amount);
+        slice $sender = $msg_body~load_msg_addr();
+        throw_unless(101, equal_slices_bits($sender, $admin));  ;; Використовуємо equal_slices замість eq_slice
+        throw_unless(102, $amount > 0);
         
         var msg = begin_cell()
             .store_uint(0x18, 6)
@@ -82,15 +86,17 @@ int hasLiked(slice user) method_id {
     return found?.slice_empty?() == 0 ? 1 : 0;
 }
 
-int getTotalLikes() method_id {
-    var $storage = get_data().begin_parse();
-    var $admin = $storage~load_msg_addr();
-    var $totalLikes = $storage~load_uint(32);
-    return $totalLikes;
-}
 
 ;; Оновлена функція eq_slice для порівняння slice
 int eq_slice(slice a, slice b) inline {
     ;; Використовуємо хешування для порівняння двох слайсів
     return slice_hash(a) == slice_hash(b);
+}
+
+
+int getTotalLikes() method_id {
+    var $storage = get_data().begin_parse();
+    var $admin = $storage~load_msg_addr();
+    var $totalLikes = $storage~load_uint(32);
+    return $totalLikes;
 }
