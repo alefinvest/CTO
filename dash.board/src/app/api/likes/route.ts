@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     
     // Перевіряємо, чи користувач вже лайкнув
     const userAddressCell = beginCell().storeAddress(Address.parse(address)).endCell();
+    console.log('userAddressCell:', userAddressCell);
     const hasLiked = await client.runMethod(contract, 'hasLiked', [{ type: 'slice', cell: userAddressCell }]);
 
     if (hasLiked.stack.readNumber() === 1) {
