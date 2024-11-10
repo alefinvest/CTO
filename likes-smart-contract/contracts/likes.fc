@@ -73,7 +73,6 @@ cell $Likes$_init_storage() inline {
     
     throw(0xffff);
 }
-
 ;; Get methods
 int hasLiked(slice user) method_id {
     var $storage = get_data().begin_parse();
@@ -82,8 +81,12 @@ int hasLiked(slice user) method_id {
     var $likes = $storage~load_dict();
     
     int user_hash = slice_hash(user);
-    var (found?, _) = $likes.udict_get?(256, user_hash);
-    return found?.slice_empty?() == 0 ? 1 : 0;
+
+    ;; Перевіряємо наявність користувача в словнику лайків
+    (slice value, int found) = $likes.udict_get?(256, user_hash);
+    
+    ;; Повертаємо 1 якщо знайдено, 0 якщо ні
+    return found;
 }
 
 
