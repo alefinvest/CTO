@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Globe, Plus, Heart } from "lucide-react";
+import { Globe, Plus, Heart, Github } from "lucide-react";
 import { useTonWallet, TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
 import { getTokenBalance } from '@/lib/tonUtils';
 import { LikeButton } from '@/components/LikeButton/LikeButton';
@@ -66,9 +66,18 @@ export function DashboardComponent() {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
-      <div className="flex flex-col gap-4 mb-8">
+      <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">{t('ctoDashboard')}</h1>
-        <TonConnectButton />
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => window.open('https://github.com/orgs/alefinvest/projects/7', '_blank')}
+          >
+            <Github className="h-5 w-5" />
+          </Button>
+          <TonConnectButton />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
