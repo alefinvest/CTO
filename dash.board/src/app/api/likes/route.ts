@@ -21,11 +21,17 @@ export async function POST(req: NextRequest) {
     // Перевіряємо, чи користувач вже лайкнув
     const userAddressCell = beginCell().storeAddress(Address.parse(address)).endCell();
     console.log('userAddressCell:', userAddressCell);
+    console.log(`[${address}], Перевіряємо, чи ви вже лайкнули`);
     const hasLiked = await client.runMethod(contract, 'hasLiked', [{ type: 'slice', cell: userAddressCell }]);
 
     if (hasLiked.stack.readNumber() === 1) {
+      console.log(`[${address}], Ви вже лайкнули`);
       return NextResponse.json({ error: 'Ви вже лайкнули' }, { status: 400 });
     }
+
+    // Викликаємо метод для лайкування
+    await client.runMethod(contract, 'like', [{ type: 'slice', cell: userAddressCell }]);
+    console.log('Лайк успішно додано');
 
     return NextResponse.json({ success: true });
   } catch (error) {
