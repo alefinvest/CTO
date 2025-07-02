@@ -1,12 +1,15 @@
 # Smart Contract Interface Prompt
 
 ```Prompt-begin
-// PROMPT: Implement a TypeScript interface for the smart contract at this location.
-// The interface should accurately represent all public methods, events, and properties
-// exposed by the contract. Use ethers.js or web3.js types as appropriate.
-// Ensure the interface is well-documented, type-safe, and ready for integration
-// with contract interaction code. Include comments for each method describing its purpose and parameters.
+Design a Plutus smart contract interface that dynamically incorporates human comments as off-chain conditions affecting the cooperation between sender and receiver. Each new comment may introduce additional terms or requirements (e.g., delivery expectations, quality standards, or special agreements) that must be verified off-chain before allowing a transaction such as sban2iban to proceed.
 
+The interface should:
+ • Accept and store human-readable comments from both sender and receiver.
+ • Allow off-chain agents or oracles to verify that all conditions implied or stated in the comments have been satisfied.
+ • Expose endpoints for submitting comments, updating the set of off-chain conditions, and confirming verification status.
+ • Prevent the transaction from executing on-chain until all off-chain verifications are confirmed.
+
+Please provide Haskell/Plutus pseudocode or an interface outline that demonstrates how these requirements would be integrated into the contract and its endpoints.
 ```
 
 ## Context
