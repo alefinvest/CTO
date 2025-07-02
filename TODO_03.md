@@ -1,7 +1,12 @@
 # Smart Contract Interface Prompt
 
 ```Prompt-begin
-//TODO: Write the prompt concidering comments on youtube and telegram thread
+// PROMPT: Implement a TypeScript interface for the smart contract at this location.
+// The interface should accurately represent all public methods, events, and properties
+// exposed by the contract. Use ethers.js or web3.js types as appropriate.
+// Ensure the interface is well-documented, type-safe, and ready for integration
+// with contract interaction code. Include comments for each method describing its purpose and parameters.
+
 ```
 
 ## Context
